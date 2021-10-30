@@ -3,8 +3,8 @@ package core
 type Block struct {
 	Index     int64  `json:"index"`
 	Timestamp int64  `json:"timestamp"`
-	PrevHash  []byte `json:"prevhash"`
-	Hash      []byte `json:"hash"`
+	PrevHash  string `json:"prevhash"`
+	Hash      string `json:"hash"`
 	Data      []byte `json:"data"` // Byte encoded transaction
 	Nonce     int64  `json:"nonce"`
 }

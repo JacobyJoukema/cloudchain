@@ -3,6 +3,7 @@ package core
 import (
 	"bytes"
 	"crypto/sha256"
+	"encoding/hex"
 	"encoding/json"
 	"fmt"
 	"strconv"
@@ -11,26 +12,26 @@ import (
 	"github.com/inflowml/logger"
 )
 
-func (block *Block) CalcHash() []byte {
+func (block *Block) CalcHash() string {
 	timestamp := []byte(strconv.FormatInt(block.Timestamp, 10))
 	nonce := []byte(strconv.FormatInt(block.Nonce, 10))
 	index := []byte(strconv.FormatInt(block.Index, 10))
-	headers := bytes.Join([][]byte{index, timestamp, block.PrevHash, block.Data, nonce}, []byte{})
+	headers := bytes.Join([][]byte{index, timestamp, []byte(block.PrevHash), block.Data, nonce}, []byte{})
 	hash := sha256.Sum256(headers)
 
-	return hash[:]
+	return hex.EncodeToString(hash[:])
 }
 
 func (block *Block) SetHash() {
 	block.Hash = block.CalcHash()[:]
 }
 
-func NewBlock(data []byte, index int64, prevBlockHash []byte) Block {
+func NewBlock(data []byte, index int64, prevBlockHash string) Block {
 	block := Block{
 		Index:     index,
 		Timestamp: time.Now().Unix(),
 		PrevHash:  prevBlockHash,
-		Hash:      []byte{},
+		Hash:      "",
 		Data:      data,
 		Nonce:     0,
 	}
@@ -50,7 +51,7 @@ func NewGenesisBlock() (Block, error) {
 		return Block{}, fmt.Errorf("failed to marshal genesis transaction: %v", err)
 	}
 
-	return NewBlock(data, 0, []byte{}), nil
+	return NewBlock(data, 0, ""), nil
 }
 
 func CreateBlock(header string, body string) {

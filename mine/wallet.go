@@ -1,14 +1,16 @@
 package mine
 
 type Wallet struct {
-	Account []byte
+	PublicKey  string
+	PrivateKey string
 }
 
 // TODO figure out how to create a unique wallet
 // TODO figure out how to split tokens
 func NewWallet(seed string) Wallet {
 	wallet := Wallet{
-		Account: []byte(seed),
+		PublicKey:  seed,
+		PrivateKey: seed,
 	}
 
 	return wallet

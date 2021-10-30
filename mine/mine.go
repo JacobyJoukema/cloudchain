@@ -1,8 +1,6 @@
 package mine
 
 import (
-	"bytes"
-	"encoding/hex"
 	"fmt"
 
 	"github.com/inflowml/logger"
@@ -37,19 +35,14 @@ func MineBlock(block core.Block, blockchain *core.Blockchain) (core.Block, error
 		compString = fmt.Sprintf("%s0", compString)
 	}
 
-	hexHash := hex.EncodeToString(block.Hash)
-
-	for hexHash[:blockchain.Difficulty] != compString {
+	for block.Hash[:blockchain.Difficulty] != compString {
 		block.Nonce += 1
 		block.SetHash()
-		hexHash = hex.EncodeToString(block.Hash)
+		//logger.Info(block.Hash)
 	}
 
 	logger.Info("Broke out of mining loop after %v iterations", block.Nonce)
-
-	if bytes.Equal(block.Hash, block.CalcHash()) {
-		logger.Info("Legal Hash: %s", hexHash)
-	}
+	logger.Info("Legal Hash: %s", block.Hash)
 
 	return block, nil
 }
